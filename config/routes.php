@@ -1,11 +1,11 @@
 <?php
 
-//use OldiesButGoldiesApp\Main\Application\Http\Actions\Home;
+use OldiesButGoldiesApp\Record\Application\Http\Actions\Record\Index;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
-return static function(RoutingConfigurator $routes)
+return function(RoutingConfigurator $routes)
 {
-//    $routes->add('home_page', '/home')
-//        ->controller([Home::class, 'execute'])
-//        ->methods(['GET']);
+    $routes->add('records_index', '/records')
+        ->controller([Index::class, 'execute'])
+        ->methods(['GET']);
 };
