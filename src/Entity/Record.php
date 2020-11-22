@@ -9,13 +9,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Exception;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=RecordRepository::class)
  * @ORM\Table(name="records")
  * @ORM\HasLifecycleCallbacks
  */
-class Record implements \JsonSerializable
+class Record implements JsonSerializable
 {
     /**
      * @ORM\Id

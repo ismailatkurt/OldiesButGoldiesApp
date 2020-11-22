@@ -7,13 +7,14 @@ use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
+use JsonSerializable;
 
 /**
  * @ORM\Entity(repositoryClass=ArtistRepository::class)
  * @ORM\Table(name="artists")
  * @ORM\HasLifecycleCallbacks
  */
-class Artist implements \JsonSerializable
+class Artist implements JsonSerializable
 {
     /**
      * @ORM\Id
