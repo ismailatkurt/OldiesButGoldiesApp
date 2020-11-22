@@ -99,7 +99,6 @@ class ArtistsController extends AbstractController
                 'message' => 'Artist already exists.'
             ];
         } catch (Exception $exception) {
-            var_dump($exception->getMessage()); die;
             $response = [
                 'message' => 'Could not saved artist!'
             ];

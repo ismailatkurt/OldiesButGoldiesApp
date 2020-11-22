@@ -25,7 +25,7 @@ interface RecordServiceInterface
      *
      * @throws ORMException
      */
-    public function create(string $name, int $artistId): Record;
+    public function create(string $name, int $artistId): ?Record;
 
     /**
      * @param Record $record
@@ -40,4 +40,13 @@ interface RecordServiceInterface
      * @return Record|null
      */
     public function one(int $id): ?Record;
+
+    /**
+     * @param int $id
+     * @param string $name
+     * @param int $artistId
+     *
+     * @return Record
+     */
+    public function update(int $id, string $name, int $artistId): Record;
 }

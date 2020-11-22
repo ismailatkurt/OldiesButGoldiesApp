@@ -35,7 +35,9 @@ class RecordRepository extends ServiceEntityRepository implements RecordReposito
      */
     public function all(int $page, int $limit, ?string $searchTerm = ''): RecordsResult
     {
-        $queryBuilder = $this->createQueryBuilder('a');
+        $queryBuilder = $this->createQueryBuilder('a')
+        ->innerJoin('a.artist', 'art')
+            ->addSelect('art');
 
         if (!empty($searchTerm)) {
             $queryBuilder->where('LOWER(a.name) like :searchTerm')
@@ -58,12 +60,16 @@ class RecordRepository extends ServiceEntityRepository implements RecordReposito
     /**
      * @param Record $record
      *
+     * @return Record|null
+     *
      * @throws ORMException
      */
-    public function save(Record $record): void
+    public function save(Record $record): ?Record
     {
         $this->getEntityManager()->persist($record);
         $this->getEntityManager()->flush();
+
+        return $record;
     }
 
     /**

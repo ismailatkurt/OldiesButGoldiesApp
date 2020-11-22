@@ -6,17 +6,14 @@ use App\Repository\Record\RecordRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Doctrine\ORM\Mapping\PrePersist;
 use Exception;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 
 /**
  * @ORM\Entity(repositoryClass=RecordRepository::class)
  * @ORM\Table(name="records")
- * @Entity @HasLifecycleCallbacks
+ * @ORM\HasLifecycleCallbacks
  */
 class Record implements \JsonSerializable
 {
@@ -121,7 +118,7 @@ class Record implements \JsonSerializable
     }
 
     /**
-     * @PrePersist
+     * @ORM\PrePersist()
      *
      * @throws Exception
      */
@@ -139,7 +136,7 @@ class Record implements \JsonSerializable
     }
 
     /**
-     * @PrePersist
+     * @ORM\PreUpdate()
      *
      * @throws Exception
      */

@@ -52,7 +52,7 @@ class RecordService implements RecordServiceInterface
      * @return Record
      * @throws ORMException
      */
-    public function create(string $name, int $artistId): Record
+    public function create(string $name, int $artistId): ?Record
     {
         $record = new Record();
         $record->setName($name);
@@ -60,9 +60,7 @@ class RecordService implements RecordServiceInterface
         $artist = $this->artistRepository->one($artistId);
         $record->setArtist($artist);
 
-        $this->recordCacheRepository->save($record);
-
-        return $record;
+        return $this->recordCacheRepository->save($record);
     }
 
     /**
@@ -84,5 +82,26 @@ class RecordService implements RecordServiceInterface
     public function one(int $id): ?Record
     {
         return $this->recordCacheRepository->one($id);
+    }
+
+    /**
+     * @param int $id
+     * @param string $name
+     * @param int $artistId
+     *
+     * @return Record
+     *
+     * @throws ORMException
+     */
+    public function update(int $id, string $name, int $artistId): Record
+    {
+        $record = $this->one($id);
+
+        $record->setName($name);
+
+        $artist = $this->artistRepository->one($artistId);
+        $record->setArtist($artist);
+
+        return $this->recordCacheRepository->save($record);
     }
 }

@@ -2,19 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\ArtistRepository;
+use App\Repository\Artist\ArtistRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
-use Doctrine\ORM\Mapping\PrePersist;
 use Exception;
 
 /**
  * @ORM\Entity(repositoryClass=ArtistRepository::class)
  * @ORM\Table(name="artists")
- * @Entity @HasLifecycleCallbacks
+ * @ORM\HasLifecycleCallbacks
  */
 class Artist implements \JsonSerializable
 {
@@ -102,7 +99,7 @@ class Artist implements \JsonSerializable
     }
 
     /**
-     * @PrePersist
+     * @ORM\PrePersist()
      *
      * @throws Exception
      */
@@ -120,7 +117,7 @@ class Artist implements \JsonSerializable
     }
 
     /**
-     * @PrePersist
+     * @ORM\PreUpdate()
      *
      * @throws Exception
      */

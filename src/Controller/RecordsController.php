@@ -4,11 +4,15 @@ namespace App\Controller;
 
 use App\Events\Record\Deleted;
 use App\Events\Record\Saved;
+use App\Events\Record\Updated;
 use App\RequestFilters\Record\AllRequestFilter;
 use App\RequestFilters\Record\CreateRequestFilter;
+use App\RequestFilters\Record\DeleteRequestFilter;
+use App\RequestFilters\Record\OneRequestFilter;
+use App\RequestFilters\Record\UpdateRequestFilter;
 use App\Services\Record\RecordService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\ORMInvalidArgumentException;
+use Doctrine\ORM\ORMException;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -74,21 +78,51 @@ class RecordsController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param CreateRequestFilter $createRequestFilter
+     * @param int $id
+     * @param OneRequestFilter $requestFilter
      *
      * @return JsonResponse
      */
-    public function create(Request $request, CreateRequestFilter $createRequestFilter)
+    public function one(int $id, OneRequestFilter $requestFilter)
+    {
+        $statusCode = 404;
+
+        try {
+            $requestFilter->setData(['id' => $id]);
+            if ($requestFilter->isValid()) {
+                $requestData = $requestFilter->getValues();
+                $response = $this->recordService->one($requestData['id']);
+                $statusCode = 200;
+            } else {
+                $response = [
+                    'error' => $requestFilter->getMessages()
+                ];
+            }
+        } catch (Exception $exception) {
+            $response = [
+                'message' => 'Could not find record!'
+            ];
+        }
+
+        return new JsonResponse($response, $statusCode);
+    }
+
+    /**
+     * @param Request $request
+     * @param CreateRequestFilter $requestFilter
+     *
+     * @return JsonResponse
+     */
+    public function create(Request $request, CreateRequestFilter $requestFilter)
     {
         $statusCode = 400;
 
         try {
             $postData = json_decode($request->getContent(), true);
-            $createRequestFilter->setData($postData);
+            $requestFilter->setData($postData);
 
-            if ($createRequestFilter->isValid()) {
-                $requestData = $createRequestFilter->getValues();
+            if ($requestFilter->isValid()) {
+                $requestData = $requestFilter->getValues();
                 $record = $this->recordService->create($requestData['name'], $requestData['artistId']);
                 $this->eventDispatcher->dispatch(new Saved($record), Saved::NAME);
 
@@ -96,7 +130,7 @@ class RecordsController extends AbstractController
                 $statusCode = 201;
             } else {
                 $response = [
-                    'error' => $createRequestFilter->getMessages()
+                    'error' => $requestFilter->getMessages()
                 ];
             }
         } catch (UniqueConstraintViolationException $exception) {
@@ -105,7 +139,7 @@ class RecordsController extends AbstractController
             ];
         } catch (Exception $exception) {
             $response = [
-                'message' => 'Could not saved record!'
+                'message' => 'Could not save record!'
             ];
         }
 
@@ -114,38 +148,80 @@ class RecordsController extends AbstractController
 
     /**
      * @param int $id
+     * @param DeleteRequestFilter $requestFilter
      *
      * @return JsonResponse
      */
-    public function delete(int $id)
+    public function delete(int $id, DeleteRequestFilter $requestFilter)
     {
         $statusCode = 400;
 
         try {
-            $record = $this->recordService->one($id);
-            if ($record) {
-                $this->recordService->delete($record);
+            $requestFilter->setData(['id' => $id]);
+            if ($requestFilter->isValid()) {
+                $requestData = $requestFilter->getValues();
+                $record = $this->recordService->one($requestData['id']);
+                if ($record) {
+                    $this->recordService->delete($record);
 
-                $response = [
-                    'Record deleted successfully!'
-                ];
-                $statusCode = 202;
-                $this->eventDispatcher->dispatch(new Deleted($record), Deleted::NAME);
+                    $response = [
+                        'Record deleted successfully!'
+                    ];
+                    $statusCode = 202;
+                    $this->eventDispatcher->dispatch(new Deleted($record), Deleted::NAME);
+                } else {
+                    $response = [
+                        'Record does not exist!'
+                    ];
+                }
             } else {
                 $response = [
-                    'Record does not exist!'
+                    'error' => $requestFilter->getMessages()
                 ];
             }
-        } catch (ORMInvalidArgumentException $exception) {
-            $response = [
-                'Invalid argument!'
-            ];
         } catch (\Exception $exception) {
             $response = [
                 'Record could not be deleted!'
             ];
         }
 
+        return new JsonResponse($response, $statusCode);
+    }
+
+    public function update(int $id, Request $request, UpdateRequestFilter $requestFilter)
+    {
+        $statusCode = 400;
+
+        try {
+            $postData = json_decode($request->getContent(), true);
+            $postData['id'] = $id;
+
+            $requestFilter->setData($postData);
+
+            if ($requestFilter->isValid()) {
+                $requestData = $requestFilter->getValues();
+                $record = $this->recordService->update(
+                    $requestData['id'],
+                    $requestData['name'],
+                    $requestData['artistId']
+                );
+                $response = $record;
+                $statusCode = 204;
+                $this->eventDispatcher->dispatch(new Updated($record), Updated::NAME);
+            } else {
+                $response = [
+                    'error' => $requestFilter->getMessages()
+                ];
+            }
+        } catch (UniqueConstraintViolationException $exception) {
+            $response = [
+                'message' => 'Record already exists.'
+            ];
+        } catch (Exception $exception) {
+            $response = [
+                'message' => 'Could not update record!'
+            ];
+        }
         return new JsonResponse($response, $statusCode);
     }
 }

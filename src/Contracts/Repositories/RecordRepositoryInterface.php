@@ -20,9 +20,11 @@ interface RecordRepositoryInterface
     /**
      * @param Record $record
      *
+     * @return Record|null
+     *
      * @throws ORMException
      */
-    public function save(Record $record): void;
+    public function save(Record $record): ?Record;
 
     /**
      * @param int $id

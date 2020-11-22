@@ -4,7 +4,6 @@ namespace App\Repository\Record;
 
 use App\Adapters\RedisAdapter;
 use App\Contracts\Repositories\RecordRepositoryInterface;
-use App\Entity\Artist;
 use App\Entity\Record;
 use App\Presenters\RecordsResult;
 use Doctrine\ORM\ORMException;
@@ -73,11 +72,13 @@ class CacheRepository implements RecordRepositoryInterface
     /**
      * @param Record $record
      *
+     * @return Record|null
+     *
      * @throws ORMException
      */
-    public function save(Record $record): void
+    public function save(Record $record): ?Record
     {
-        $this->recordRepository->save($record);
+        return $this->recordRepository->save($record);
     }
 
     /**
