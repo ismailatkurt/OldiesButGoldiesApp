@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Events\Artist\Saved;
 use App\RequestFilters\Artist\AllRequestFilter;
 use App\RequestFilters\Artist\CreateRequestFilter;
+use App\RequestFilters\Artist\OneRequestFilter;
 use App\Services\Artist\ArtistService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
@@ -69,6 +70,36 @@ class ArtistsController extends AbstractController
         }
 
         return new JsonResponse($response);
+    }
+
+    /**
+     * @param int $id
+     * @param OneRequestFilter $requestFilter
+     *
+     * @return JsonResponse
+     */
+    public function one(int $id, OneRequestFilter $requestFilter)
+    {
+        $statusCode = 404;
+
+        try {
+            $requestFilter->setData(['id' => $id]);
+            if ($requestFilter->isValid()) {
+                $requestData = $requestFilter->getValues();
+                $response = $this->artistService->one($requestData['id']);
+                $statusCode = 200;
+            } else {
+                $response = [
+                    'error' => $requestFilter->getMessages()
+                ];
+            }
+        } catch (Exception $exception) {
+            $response = [
+                'message' => 'Could not find artist!'
+            ];
+        }
+
+        return new JsonResponse($response, $statusCode);
     }
 
     /**

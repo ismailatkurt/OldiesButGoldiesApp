@@ -12,6 +12,7 @@ use Psr\Cache\InvalidArgumentException;
 class CacheRepository implements ArtistRepositoryInterface
 {
     const ARTIST_ALL_CACHE_KEY = 'artists_all';
+    const ARTIST_SINGLE_CACHE_KEY = 'artists_one';
 
     /**
      * @var RedisAdapter
@@ -88,5 +89,21 @@ class CacheRepository implements ArtistRepositoryInterface
     public function one(int $id): ?Artist
     {
         return $this->artistRepository->one($id);
+
+        $artist = $this->cacheAdapter->get(
+            self::ARTIST_SINGLE_CACHE_KEY . '_' . $id
+        );
+
+        if (empty($artist)) {
+            $artist = $this->artistRepository->one($id);
+            $this->cacheAdapter->set(
+                self::ARTIST_SINGLE_CACHE_KEY . '_' . $id,
+                serialize($artist)
+            );
+        } else {
+            $artist = unserialize($artist);
+        }
+
+        return $artist;
     }
 }

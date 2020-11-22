@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\Artist\ArtistRepository;
 use DateTime;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use JsonSerializable;
@@ -42,6 +44,17 @@ class Artist implements JsonSerializable
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updated_at;
+
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="Record", mappedBy="artist")
+     */
+    private $records;
+
+    public function __construct()
+    {
+        $this->records = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -128,10 +141,25 @@ class Artist implements JsonSerializable
     }
 
     /**
+     * @return mixed
+     */
+    public function getRecords()
+    {
+        return $this->records;
+    }
+
+    /**
      * @return array|mixed
      */
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'photo' => $this->getPhoto(),
+            'created_at' => $this->getCreatedAt(),
+            'updated_at' => $this->getUpdatedAt(),
+            'records' => $this->getRecords()
+        ];
     }
 }

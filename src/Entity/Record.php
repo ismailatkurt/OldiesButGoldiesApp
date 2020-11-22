@@ -6,8 +6,6 @@ use App\Repository\Record\RecordRepository;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToOne;
 use Exception;
 use JsonSerializable;
 
@@ -36,8 +34,8 @@ class Record implements JsonSerializable
     private $cover_photo;
 
     /**
-     * @ManyToOne(targetEntity="Artist")
-     * @JoinColumn(name="artist_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Artist", inversedBy="records")
+     * @ORM\JoinColumn(name="artist_id", referencedColumnName="id")
      */
     private $artist;
 
