@@ -14,3 +14,14 @@ before_install:
 script:
   - composer install
   - phpunit --configuration tests/unittests/phpunit.xml tests/unittests
+
+deploy:
+  provider: elasticbeanstalk
+  access_key_id:
+    secure: "Encrypted <access-key-id>="
+  secret_access_key:
+    secure: "Encypted <secret-access-key>="
+  region: "us-east-1"
+  app: "OldiesButGoldiesApp"
+  env: "OldiesButGoldiesApp-environment"
+  bucket_name: "arn:aws:s3:::elasticbeanstalk-eu-central-1-201717832248"
