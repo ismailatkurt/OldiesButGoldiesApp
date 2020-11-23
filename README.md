@@ -16,3 +16,6 @@ Requirements
 docker-compose up --build
 ```
 That is supposed to take a couple of minutes. Once it is finalized, open your browser and go to http://localhost
+
+### Documentation
+Swagger UI can be found under http://localhost/documentation

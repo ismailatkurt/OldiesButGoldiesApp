@@ -56,7 +56,7 @@ class ArtistsController extends AbstractController
                 $response = $this->artistService->all(
                     $requestData['page'],
                     $requestData['limit'],
-                    $requestData['search-term']
+                    $requestData['searchTerm']
                 );
             } else {
                 $response = [

@@ -409,5 +409,8 @@
     },
     "zendframework/zend-validator": {
         "version": "2.13.0"
+    },
+    "zircote/swagger-php": {
+        "version": "3.1.0"
     }
 }

@@ -29,7 +29,7 @@ abstract class AbstractAllRequestFilter extends InputFilter
         $limit->getValidatorChain()->attach($greaterThanValidator);
         $this->add($limit);
 
-        $searchTerm = new Input('search-term');
+        $searchTerm = new Input('searchTerm');
         $searchTerm->setRequired(false);
         $this->add($searchTerm);
     }

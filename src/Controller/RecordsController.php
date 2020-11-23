@@ -12,12 +12,12 @@ use App\RequestFilters\Record\OneRequestFilter;
 use App\RequestFilters\Record\UpdateRequestFilter;
 use App\Services\Record\RecordService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\ORMException;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use OpenApi\Annotations as OA;
 
 class RecordsController extends AbstractController
 {
@@ -38,7 +38,8 @@ class RecordsController extends AbstractController
     public function __construct(
         RecordService $recordService,
         EventDispatcherInterface $eventDispatcher
-    ) {
+    )
+    {
         $this->recordService = $recordService;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -48,6 +49,38 @@ class RecordsController extends AbstractController
      * @param AllRequestFilter $allRequestFilter
      *
      * @return JsonResponse
+     *
+     * @OA\Get(
+     *     operationId="index",
+     *     path="/records",
+     *     tags={"records"},
+     *     @OA\Parameter(name="page",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="int")
+     *     ),
+     *     @OA\Parameter(name="limit",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="int")
+     *     ),
+     *     @OA\Parameter(name="searchTerm",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="string")
+     *     ),
+     *     summary="Returns most accurate search result object",
+     *     description="Search for an object, if found return it!",
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of records"
+     *     )
+     * )
+     *
+     * @OA\Link(link="UserRepositories",
+     *   operationId="getRepositoriesByOwner",
+     *   parameters={"username"="$response.body#/username"}
+     * )
      */
     public function index(Request $request, AllRequestFilter $allRequestFilter)
     {
@@ -61,7 +94,7 @@ class RecordsController extends AbstractController
                 $response = $this->recordService->all(
                     $requestData['page'],
                     $requestData['limit'],
-                    $requestData['search-term']
+                    $requestData['searchTerm']
                 );
             } else {
                 $response = [
@@ -82,6 +115,28 @@ class RecordsController extends AbstractController
      * @param OneRequestFilter $requestFilter
      *
      * @return JsonResponse
+     *
+     * @OA\Get(
+     *     path="/records/{recordId}",
+     *     tags={"records"},
+     *     operationId="one",
+     *     @OA\Parameter(
+     *         name="recordId",
+     *         in="path",
+     *         required=true,
+     *         description="The id of the record to retrieve",
+     *         @OA\Schema(
+     *           type="integer",
+     *           format="int64"
+     *         )
+     *     ),
+     *     summary="Returns most accurate search result object",
+     *     description="Search for an object, if found return it!",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Returns Single Record"
+     *     )
+     * )
      */
     public function one(int $id, OneRequestFilter $requestFilter)
     {

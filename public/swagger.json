@@ -1,0 +1,88 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "OldiesButGoldies API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/": {},
+        "/records": {
+            "get": {
+                "tags": [
+                    "records"
+                ],
+                "summary": "Returns most accurate search result object",
+                "description": "Search for an object, if found return it!",
+                "operationId": "getRepositoriesByOwner",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "searchTerm",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of records"
+                    }
+                }
+            }
+        },
+        "/records/{recordId}": {
+            "get": {
+                "tags": [
+                    "records"
+                ],
+                "summary": "Returns most accurate search result object",
+                "description": "Search for an object, if found return it!",
+                "operationId": "one",
+                "parameters": [
+                    {
+                        "name": "recordId",
+                        "in": "path",
+                        "description": "The id of the record to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns Single Record"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "links": {
+            "UserRepositories": {
+                "operationId": "getRepositoriesByOwner",
+                "parameters": {
+                    "username": "$response.body#/username"
+                }
+            }
+        }
+    }
+}
