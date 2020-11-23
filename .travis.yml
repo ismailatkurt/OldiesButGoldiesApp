@@ -1,4 +1,4 @@
-anguage: php
+language: php
 
 sudo: required
 dist: trusty
@@ -12,6 +12,7 @@ before_install:
 
 before_script:
   - pecl install redis
+  - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 script:
   - composer install
