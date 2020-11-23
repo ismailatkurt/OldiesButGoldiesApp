@@ -32,7 +32,10 @@
             "*": "dist"
         },
         "sort-packages": true,
-        "bin-dir": "bin/"
+        "bin-dir": "bin/",
+        "platform": {
+            "php": "7.4.0"
+        }
     },
     "autoload": {
         "psr-4": {
