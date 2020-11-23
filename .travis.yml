@@ -15,13 +15,13 @@ script:
   - composer install
   - phpunit --configuration tests/unittests/phpunit.xml tests/unittests
 
-deploy:
-  provider: elasticbeanstalk
-  access_key_id:
-    secure: echo $SECRET_KEY
-  secret_access_key:
-    secure: echo $SECRET_ACCESS
-  region: "eu-central-1"
-  app: "OldiesButGoldiesApp"
-  env: "OldiesButGoldiesApp-environment"
-  bucket_name: "elasticbeanstalk-eu-central-1-201717832248"
+#deploy:
+#  provider: elasticbeanstalk
+#  access_key_id:
+#    secure: echo $SECRET_KEY
+#  secret_access_key:
+#    secure: echo $SECRET_ACCESS
+#  region: "eu-central-1"
+#  app: "OldiesButGoldiesApp"
+#  env: "OldiesButGoldiesApp-environment"
+#  bucket_name: "elasticbeanstalk-eu-central-1-201717832248"
