@@ -4,7 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    redis_host: localhost
+    redis_host: oldies_app_redis
     redis_port: 6379
     redis_database_id: 1
     redis_prefix: "oldies_"

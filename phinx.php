@@ -20,7 +20,7 @@ return
         ],
         'development' => [
             'adapter' => 'pgsql',
-            'host' => 'localhost',
+            'host' => 'oldies_app_postgres',
             'name' => 'oldies_api_db',
             'user' => 'oldies_db_user',
             'pass' => 'oldies_api_password',
