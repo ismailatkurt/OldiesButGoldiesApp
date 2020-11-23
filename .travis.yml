@@ -24,4 +24,4 @@ deploy:
   region: "eu-central-1"
   app: "OldiesButGoldiesApp"
   env: "OldiesButGoldiesApp-environment"
-  bucket_name: "arn:aws:s3:::elasticbeanstalk-eu-central-1-201717832248"
+  bucket_name: "elasticbeanstalk-eu-central-1-201717832248"
