@@ -9,7 +9,9 @@ before_install:
   - composer self-update
   - composer clear-cache
   - composer update --no-interaction --no-ansi --no-suggest --optimize-autoloader --prefer-stable
-  - echo "extension = redis.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+
+before_script:
+  - pecl install redis
 
 script:
   - composer install
