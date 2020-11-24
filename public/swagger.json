@@ -53,6 +53,97 @@
                         "description": "List of artists"
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Create new artist",
+                "description": "Create new artist with given data",
+                "operationId": "create",
+                "requestBody": {
+                    "description": "Input data format",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Name of the artist",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "Edith Piaf"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns Created Artist"
+                    }
+                }
+            }
+        },
+        "/artists/{artistId}": {
+            "get": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Get single artist",
+                "description": "Returns the artist with given ID.",
+                "operationId": "one",
+                "parameters": [
+                    {
+                        "name": "artistId",
+                        "in": "path",
+                        "description": "The id of the artist to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns Single artist"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Update artist",
+                "description": "Update the artist with given ID and provided post data.",
+                "operationId": "update",
+                "requestBody": {
+                    "description": "Input data format",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Updated name of the artist",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "Daft Punk"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns Updated Artist"
+                    }
+                }
             }
         },
         "/records": {
@@ -110,7 +201,30 @@
                                 "properties": {
                                     "name": {
                                         "description": "Name of the record",
+                                        "required": [
+                                            "true"
+                                        ],
                                         "type": "string"
+                                    },
+                                    "genre": {
+                                        "description": "Genre of the record",
+                                        "required": [
+                                            "false"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Description of the record",
+                                        "required": [
+                                            "false"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "publishedAt": {
+                                        "description": "Published date of the record",
+                                        "required": [
+                                            "false"
+                                        ]
                                     },
                                     "artistId": {
                                         "description": "ID of related artist",
@@ -120,7 +234,10 @@
                                 "type": "object",
                                 "example": {
                                     "name": "Down By The River",
-                                    "artistId": 52
+                                    "artistId": 52,
+                                    "genre": "Classic Rock",
+                                    "description": "some record description",
+                                    "publishedAt": "1966-03-26"
                                 }
                             }
                         }
@@ -176,6 +293,26 @@
                                         "description": "Updated name of the record",
                                         "type": "string"
                                     },
+                                    "genre": {
+                                        "description": "Genre of the record",
+                                        "required": [
+                                            "false"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "Description of the record",
+                                        "required": [
+                                            "false"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "publishedAt": {
+                                        "description": "Published date of the record",
+                                        "required": [
+                                            "false"
+                                        ]
+                                    },
                                     "artistId": {
                                         "description": "ID of related artist",
                                         "type": "int"
@@ -183,8 +320,11 @@
                                 },
                                 "type": "object",
                                 "example": {
-                                    "name": "Down By The River",
-                                    "artistId": 52
+                                    "name": "Down By The River 2",
+                                    "artistId": 52,
+                                    "genre": "Pop Music",
+                                    "description": "some updated record description",
+                                    "publishedAt": "1976-04-27"
                                 }
                             }
                         }

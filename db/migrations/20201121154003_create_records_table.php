@@ -9,6 +9,9 @@ final class CreateRecordsTable extends AbstractMigration
     {
         $table = $this->table('records');
         $table->addColumn('name', PostgresAdapter::PHINX_TYPE_STRING, ['null' => false])
+            ->addColumn('genre', PostgresAdapter::PHINX_TYPE_STRING, ['null' => true])
+            ->addColumn('description', PostgresAdapter::PHINX_TYPE_STRING, ['null' => true])
+            ->addColumn('published_at', PostgresAdapter::PHINX_TYPE_DATE, ['null' => true])
             ->addColumn('cover_photo', PostgresAdapter::PHINX_TYPE_STRING, ['null' => true])
             ->addColumn('artist_id', PostgresAdapter::PHINX_TYPE_INTEGER, ['null' => false])
             ->addForeignKey('artist_id', 'artists', 'id')

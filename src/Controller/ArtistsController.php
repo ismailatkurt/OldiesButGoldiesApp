@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Events\Artist\Saved;
+use App\Events\Artist\Updated;
 use App\RequestFilters\Artist\AllRequestFilter;
 use App\RequestFilters\Artist\CreateRequestFilter;
 use App\RequestFilters\Artist\OneRequestFilter;
+use App\RequestFilters\Artist\UpdateRequestFilter;
 use App\Services\Artist\ArtistService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
@@ -104,6 +106,28 @@ class ArtistsController extends AbstractController
      * @param OneRequestFilter $requestFilter
      *
      * @return JsonResponse
+     *
+     * @OA\Get(
+     *     path="/artists/{artistId}",
+     *     tags={"artists"},
+     *     operationId="one",
+     *     summary="Get single artist",
+     *     description="Returns the artist with given ID.",
+     *     @OA\Parameter(
+     *         name="artistId",
+     *         in="path",
+     *         required=true,
+     *         description="The id of the artist to retrieve",
+     *         @OA\Schema(
+     *           type="integer",
+     *           format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Returns Single artist"
+     *     )
+     * )
      */
     public function one(int $id, OneRequestFilter $requestFilter)
     {
@@ -134,6 +158,34 @@ class ArtistsController extends AbstractController
      * @param CreateRequestFilter $createRequestFilter
      *
      * @return JsonResponse
+     *
+     * @OA\Post(
+     *     path="/artists",
+     *     tags={"artists"},
+     *     operationId="create",
+     *     summary="Create new artist",
+     *     description="Create new artist with given data",
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Returns Created Artist"
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         description="Input data format",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="name",
+     *                     description="Name of the artist",
+     *                     type="string",
+     *                 ),
+     *                 example={"name": "Edith Piaf"}
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function create(Request $request, CreateRequestFilter $createRequestFilter)
     {
@@ -163,5 +215,76 @@ class ArtistsController extends AbstractController
         }
 
         return new JsonResponse($response);
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @param UpdateRequestFilter $requestFilter
+     *
+     * @return JsonResponse
+     *
+     * @OA\Put(
+     *     path="/artists/{artistId}",
+     *     tags={"artists"},
+     *     operationId="update",
+     *     summary="Update artist",
+     *     description="Update the artist with given ID and provided post data.",
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Returns Updated Artist"
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         description="Input data format",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="name",
+     *                     description="Updated name of the artist",
+     *                     type="string",
+     *                 ),
+     *                 example={"name": "Daft Punk"}
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function update(int $id, Request $request, UpdateRequestFilter $requestFilter)
+    {
+        $statusCode = 400;
+
+        try {
+            $postData = json_decode($request->getContent(), true);
+            $postData['id'] = $id;
+
+            $requestFilter->setData($postData);
+
+            if ($requestFilter->isValid()) {
+                $requestData = $requestFilter->getValues();
+                $artist = $this->artistService->update(
+                    $requestData['id'],
+                    $requestData['name']
+                );
+                $response = $artist;
+                $statusCode = 204;
+                $this->eventDispatcher->dispatch(new Updated($artist), Updated::NAME);
+            } else {
+                $response = [
+                    'error' => $requestFilter->getMessages()
+                ];
+            }
+        } catch (UniqueConstraintViolationException $exception) {
+            $response = [
+                'message' => 'Artist already exists.'
+            ];
+        } catch (Exception $exception) {
+            $response = [
+                'message' => 'Could not update artist!'
+            ];
+        }
+        return new JsonResponse($response, $statusCode);
     }
 }

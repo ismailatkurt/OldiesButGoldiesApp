@@ -1,6 +1,6 @@
 <?php
 
-namespace App\RequestFilters\Record;
+namespace App\RequestFilters\Artist;
 
 use App\RequestFilters\AbstractUpdateRequestFilter;
 

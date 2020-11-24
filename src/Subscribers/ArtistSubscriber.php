@@ -56,6 +56,6 @@ class ArtistSubscriber extends AbstractSubscriber implements EventSubscriberInte
     public function onDeletedAction(Deleted $event)
     {
         $this->deleteWithPattern(CacheRepository::ARTIST_ALL_CACHE_KEY . '*');
-        $this->cacheAdapter->del(Record::class . '_one_' . $event->getArtist()->getId());
+        $this->cacheAdapter->del(Artist::class . '_one_' . $event->getArtist()->getId());
     }
 }

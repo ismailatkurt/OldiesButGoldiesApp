@@ -7,6 +7,7 @@ use App\Entity\Record;
 use App\Presenters\RecordsResult;
 use App\Repository\Artist\ArtistRepository;
 use App\Repository\Record\CacheRepository;
+use DateTime;
 use Doctrine\ORM\ORMException;
 
 class RecordService implements RecordServiceInterface
@@ -48,14 +49,26 @@ class RecordService implements RecordServiceInterface
     /**
      * @param string $name
      * @param int $artistId
+     * @param string|null $genre
+     * @param string|null $description
+     * @param DateTime|null $publishedAt
      *
      * @return Record
+     *
      * @throws ORMException
      */
-    public function create(string $name, int $artistId): ?Record
-    {
+    public function create(
+        string $name,
+        int $artistId,
+        ?string $genre = '',
+        ?string $description = '',
+        ?DateTime $publishedAt = null
+    ): ?Record {
         $record = new Record();
         $record->setName($name);
+        $record->setGenre($genre);
+        $record->setDescription($description);
+        $record->setPublishedAt($publishedAt);
 
         $artist = $this->artistRepository->one($artistId);
         $record->setArtist($artist);

@@ -11,6 +11,7 @@ use App\RequestFilters\Record\DeleteRequestFilter;
 use App\RequestFilters\Record\OneRequestFilter;
 use App\RequestFilters\Record\UpdateRequestFilter;
 use App\Services\Record\RecordService;
+use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use Psr\Cache\InvalidArgumentException;
@@ -184,13 +185,35 @@ class RecordsController extends AbstractController
      *                     property="name",
      *                     description="Name of the record",
      *                     type="string",
+     *                     required={"true"},
+     *                 ),
+     *                 @OA\Property(
+     *                     property="genre",
+     *                     description="Genre of the record",
+     *                     type="string",
+     *                     required={"false"},
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description",
+     *                     description="Description of the record",
+     *                     type="string",
+     *                     required={"false"},
+     *                 ),
+     *                 @OA\Property(
+     *                     property="publishedAt",
+     *                     description="Published date of the record",
+     *                     required={"false"},
+     *                     @OA\Schema(
+     *                         type="string",
+     *                         format="datetime"
+     *                     )
      *                 ),
      *                 @OA\Property(
      *                     property="artistId",
      *                     description="ID of related artist",
      *                     type="int",
      *                 ),
-     *                 example={"name": "Down By The River", "artistId": 52}
+     *                 example={"name": "Down By The River", "artistId": 52, "genre": "Classic Rock", "description": "some record description", "publishedAt": "1966-03-26"}
      *             )
      *         )
      *     )
@@ -206,7 +229,14 @@ class RecordsController extends AbstractController
 
             if ($requestFilter->isValid()) {
                 $requestData = $requestFilter->getValues();
-                $record = $this->recordService->create($requestData['name'], $requestData['artistId']);
+                $publishedAt = DateTime::createFromFormat('Y-m-d', $requestData['publishedAt']);
+                $record = $this->recordService->create(
+                    $requestData['name'],
+                    $requestData['artistId'],
+                    $requestData['genre'],
+                    $requestData['description'],
+                    $publishedAt ? $publishedAt : null
+                );
                 $this->eventDispatcher->dispatch(new Saved($record), Saved::NAME);
 
                 $response = $record;
@@ -226,6 +256,104 @@ class RecordsController extends AbstractController
             ];
         }
 
+        return new JsonResponse($response, $statusCode);
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @param UpdateRequestFilter $requestFilter
+     *
+     * @return JsonResponse
+     *
+     * @OA\Put(
+     *     path="/records/{recordId}",
+     *     tags={"records"},
+     *     operationId="update",
+     *     summary="Update record",
+     *     description="Update the record with given ID and provided post data.",
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Returns Updated Record"
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         description="Input data format",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="name",
+     *                     description="Updated name of the record",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="genre",
+     *                     description="Genre of the record",
+     *                     type="string",
+     *                     required={"false"},
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description",
+     *                     description="Description of the record",
+     *                     type="string",
+     *                     required={"false"},
+     *                 ),
+     *                 @OA\Property(
+     *                     property="publishedAt",
+     *                     description="Published date of the record",
+     *                     required={"false"},
+     *                     @OA\Schema(
+     *                         type="string",
+     *                         format="datetime"
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="artistId",
+     *                     description="ID of related artist",
+     *                     type="int",
+     *                 ),
+     *                 example={"name": "Down By The River 2", "artistId": 52, "genre": "Pop Music", "description": "some updated record description", "publishedAt": "1976-04-27"}
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function update(int $id, Request $request, UpdateRequestFilter $requestFilter)
+    {
+        $statusCode = 400;
+
+        try {
+            $postData = json_decode($request->getContent(), true);
+            $postData['id'] = $id;
+
+            $requestFilter->setData($postData);
+
+            if ($requestFilter->isValid()) {
+                $requestData = $requestFilter->getValues();
+                $record = $this->recordService->update(
+                    $requestData['id'],
+                    $requestData['name'],
+                    $requestData['artistId']
+                );
+                $response = $record;
+                $statusCode = 204;
+                $this->eventDispatcher->dispatch(new Updated($record), Updated::NAME);
+            } else {
+                $response = [
+                    'error' => $requestFilter->getMessages()
+                ];
+            }
+        } catch (UniqueConstraintViolationException $exception) {
+            $response = [
+                'message' => 'Record already exists.'
+            ];
+        } catch (Exception $exception) {
+            $response = [
+                'message' => 'Could not update record!'
+            ];
+        }
         return new JsonResponse($response, $statusCode);
     }
 
@@ -294,83 +422,6 @@ class RecordsController extends AbstractController
             ];
         }
 
-        return new JsonResponse($response, $statusCode);
-    }
-
-    /**
-     * @param int $id
-     * @param Request $request
-     * @param UpdateRequestFilter $requestFilter
-     *
-     * @return JsonResponse
-     *
-     * @OA\Put(
-     *     path="/records/{recordId}",
-     *     tags={"records"},
-     *     operationId="update",
-     *     summary="Update record",
-     *     description="Update the record with given ID and provided post data.",
-     *
-     *     @OA\Response(
-     *         response=200,
-     *         description="Returns Updated Record"
-     *     ),
-     *
-     *     @OA\RequestBody(
-     *         description="Input data format",
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 @OA\Property(
-     *                     property="name",
-     *                     description="Updated name of the record",
-     *                     type="string",
-     *                 ),
-     *                 @OA\Property(
-     *                     property="artistId",
-     *                     description="ID of related artist",
-     *                     type="int",
-     *                 ),
-     *                 example={"name": "Down By The River", "artistId": 52}
-     *             )
-     *         )
-     *     )
-     * )
-     */
-    public function update(int $id, Request $request, UpdateRequestFilter $requestFilter)
-    {
-        $statusCode = 400;
-
-        try {
-            $postData = json_decode($request->getContent(), true);
-            $postData['id'] = $id;
-
-            $requestFilter->setData($postData);
-
-            if ($requestFilter->isValid()) {
-                $requestData = $requestFilter->getValues();
-                $record = $this->recordService->update(
-                    $requestData['id'],
-                    $requestData['name'],
-                    $requestData['artistId']
-                );
-                $response = $record;
-                $statusCode = 204;
-                $this->eventDispatcher->dispatch(new Updated($record), Updated::NAME);
-            } else {
-                $response = [
-                    'error' => $requestFilter->getMessages()
-                ];
-            }
-        } catch (UniqueConstraintViolationException $exception) {
-            $response = [
-                'message' => 'Record already exists.'
-            ];
-        } catch (Exception $exception) {
-            $response = [
-                'message' => 'Could not update record!'
-            ];
-        }
         return new JsonResponse($response, $statusCode);
     }
 }

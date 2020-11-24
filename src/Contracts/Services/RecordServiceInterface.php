@@ -4,6 +4,7 @@ namespace App\Contracts\Services;
 
 use App\Entity\Record;
 use App\Presenters\RecordsResult;
+use DateTime;
 use Doctrine\ORM\ORMException;
 
 interface RecordServiceInterface
@@ -20,12 +21,21 @@ interface RecordServiceInterface
     /**
      * @param string $name
      * @param int $artistId
+     * @param string|null $genre
+     * @param string|null $description
+     * @param DateTime|null $publishedAt
      *
      * @return Record
      *
      * @throws ORMException
      */
-    public function create(string $name, int $artistId): ?Record;
+    public function create(
+        string $name,
+        int $artistId,
+        ?string $genre = '',
+        ?string $description = '',
+        ?DateTime $publishedAt = null
+    ): ?Record;
 
     /**
      * @param Record $record
