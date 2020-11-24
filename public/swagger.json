@@ -14,6 +14,47 @@
     },
     "paths": {
         "/": {},
+        "/artists": {
+            "get": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Get all artists",
+                "description": "Returns all artists available",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "searchTerm",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of artists"
+                    }
+                }
+            }
+        },
         "/records": {
             "get": {
                 "tags": [

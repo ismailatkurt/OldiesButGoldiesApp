@@ -5,7 +5,7 @@ use App\Controller\RecordsController;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 return function (RoutingConfigurator $routes) {
-    $routes->add('artists_index', '/artists')
+    $routes->add('artists_all', '/artists')
         ->controller([ArtistsController::class, 'all'])
         ->methods(['GET']);
     $routes->add('artists_one', '/artists/{id}')
@@ -15,7 +15,7 @@ return function (RoutingConfigurator $routes) {
         ->controller([ArtistsController::class, 'create'])
         ->methods(['POST']);
 
-    $routes->add('records_index', '/records')
+    $routes->add('records_all', '/records')
         ->controller([RecordsController::class, 'all'])
         ->methods(['GET']);
     $routes->add('records_one', '/records/{id}')

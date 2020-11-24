@@ -43,9 +43,37 @@ class ArtistsController extends AbstractController
      * @param AllRequestFilter $allRequestFilter
      *
      * @return JsonResponse
+     *
+     * @OA\Get(
+     *     operationId="index",
+     *     path="/artists",
+     *     tags={"artists"},
+     *     summary="Get all artists",
+     *     description="Returns all artists available",
+     *     @OA\Parameter(name="page",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="int")
+     *     ),
+     *     @OA\Parameter(name="limit",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="int")
+     *     ),
+     *     @OA\Parameter(name="searchTerm",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="string")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of artists"
+     *     )
+     * )
      */
     public function all(Request $request, AllRequestFilter $allRequestFilter)
     {
+        var_dump(11); die;
         try {
             $queryParameters = $this->getQueryParameters($request->getQueryString());
 
