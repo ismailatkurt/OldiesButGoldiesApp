@@ -73,7 +73,6 @@ class ArtistsController extends AbstractController
      */
     public function all(Request $request, AllRequestFilter $allRequestFilter)
     {
-        var_dump(11); die;
         try {
             $queryParameters = $this->getQueryParameters($request->getQueryString());
 
