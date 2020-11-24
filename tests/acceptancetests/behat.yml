@@ -1,0 +1,11 @@
+default:
+    extensions:
+        Imbo\BehatApiExtension:
+            apiClient:
+                base_uri: oldies_app_nginx:80
+    suites:
+        default:
+            contexts:
+                - Imbo\BehatApiExtension\Context\ApiContext
+            paths:
+              - "%paths.base%/features"
