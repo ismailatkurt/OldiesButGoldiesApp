@@ -44,7 +44,7 @@ class ArtistsController extends AbstractController
      *
      * @return JsonResponse
      */
-    public function index(Request $request, AllRequestFilter $allRequestFilter)
+    public function all(Request $request, AllRequestFilter $allRequestFilter)
     {
         try {
             $queryParameters = $this->getQueryParameters($request->getQueryString());

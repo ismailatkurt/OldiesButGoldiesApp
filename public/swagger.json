@@ -1,7 +1,15 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "OldiesButGoldies API",
+        "title": "Swagger Record Shop",
+        "description": "An example application for a Record Shop selling Oldies But Goldies records.",
+        "contact": {
+            "email": "ismail.atkurt@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "1.0.0"
     },
     "paths": {
@@ -11,9 +19,9 @@
                 "tags": [
                     "records"
                 ],
-                "summary": "Returns most accurate search result object",
-                "description": "Search for an object, if found return it!",
-                "operationId": "getRepositoriesByOwner",
+                "summary": "Get all records",
+                "description": "Returns all records available",
+                "operationId": "index",
                 "parameters": [
                     {
                         "name": "page",
@@ -45,6 +53,43 @@
                         "description": "List of records"
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "records"
+                ],
+                "summary": "Create new record",
+                "description": "Create new record with given data",
+                "operationId": "create",
+                "requestBody": {
+                    "description": "Input data format",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Name of the record",
+                                        "type": "string"
+                                    },
+                                    "artistId": {
+                                        "description": "ID of related artist",
+                                        "type": "int"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "Down By The River",
+                                    "artistId": 52
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns Created Record"
+                    }
+                }
             }
         },
         "/records/{recordId}": {
@@ -52,8 +97,8 @@
                 "tags": [
                     "records"
                 ],
-                "summary": "Returns most accurate search result object",
-                "description": "Search for an object, if found return it!",
+                "summary": "Get single record",
+                "description": "Returns the record with given ID.",
                 "operationId": "one",
                 "parameters": [
                     {
@@ -72,15 +117,69 @@
                         "description": "Returns Single Record"
                     }
                 }
-            }
-        }
-    },
-    "components": {
-        "links": {
-            "UserRepositories": {
-                "operationId": "getRepositoriesByOwner",
-                "parameters": {
-                    "username": "$response.body#/username"
+            },
+            "put": {
+                "tags": [
+                    "records"
+                ],
+                "summary": "Update record",
+                "description": "Update the record with given ID and provided post data.",
+                "operationId": "update",
+                "requestBody": {
+                    "description": "Input data format",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Updated name of the record",
+                                        "type": "string"
+                                    },
+                                    "artistId": {
+                                        "description": "ID of related artist",
+                                        "type": "int"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "Down By The River",
+                                    "artistId": 52
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns Updated Record"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "records"
+                ],
+                "summary": "Deletes a record",
+                "operationId": "delete",
+                "parameters": [
+                    {
+                        "name": "recordId",
+                        "in": "path",
+                        "description": "Id of the record to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Validation error message"
+                    },
+                    "404": {
+                        "description": "Record not found"
+                    }
                 }
             }
         }

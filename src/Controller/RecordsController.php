@@ -54,6 +54,8 @@ class RecordsController extends AbstractController
      *     operationId="index",
      *     path="/records",
      *     tags={"records"},
+     *     summary="Get all records",
+     *     description="Returns all records available",
      *     @OA\Parameter(name="page",
      *       in="query",
      *       required=false,
@@ -69,20 +71,13 @@ class RecordsController extends AbstractController
      *       required=false,
      *       @OA\Schema(type="string")
      *     ),
-     *     summary="Returns most accurate search result object",
-     *     description="Search for an object, if found return it!",
      *     @OA\Response(
      *         response=200,
      *         description="List of records"
      *     )
      * )
-     *
-     * @OA\Link(link="UserRepositories",
-     *   operationId="getRepositoriesByOwner",
-     *   parameters={"username"="$response.body#/username"}
-     * )
      */
-    public function index(Request $request, AllRequestFilter $allRequestFilter)
+    public function all(Request $request, AllRequestFilter $allRequestFilter)
     {
         try {
             $queryParameters = $this->getQueryParameters($request->getQueryString());
@@ -120,6 +115,8 @@ class RecordsController extends AbstractController
      *     path="/records/{recordId}",
      *     tags={"records"},
      *     operationId="one",
+     *     summary="Get single record",
+     *     description="Returns the record with given ID.",
      *     @OA\Parameter(
      *         name="recordId",
      *         in="path",
@@ -130,8 +127,6 @@ class RecordsController extends AbstractController
      *           format="int64"
      *         )
      *     ),
-     *     summary="Returns most accurate search result object",
-     *     description="Search for an object, if found return it!",
      *     @OA\Response(
      *         response=200,
      *         description="Returns Single Record"
@@ -167,6 +162,39 @@ class RecordsController extends AbstractController
      * @param CreateRequestFilter $requestFilter
      *
      * @return JsonResponse
+     *
+     * @OA\Post(
+     *     path="/records",
+     *     tags={"records"},
+     *     operationId="create",
+     *     summary="Create new record",
+     *     description="Create new record with given data",
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Returns Created Record"
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         description="Input data format",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="name",
+     *                     description="Name of the record",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="artistId",
+     *                     description="ID of related artist",
+     *                     type="int",
+     *                 ),
+     *                 example={"name": "Down By The River", "artistId": 52}
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function create(Request $request, CreateRequestFilter $requestFilter)
     {
@@ -206,6 +234,31 @@ class RecordsController extends AbstractController
      * @param DeleteRequestFilter $requestFilter
      *
      * @return JsonResponse
+     *
+     * @OA\Delete(
+     *     path="/records/{recordId}",
+     *     tags={"records"},
+     *     summary="Deletes a record",
+     *     operationId="delete",
+     *     @OA\Parameter(
+     *         name="recordId",
+     *         in="path",
+     *         description="Id of the record to delete",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error message",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Record not found",
+     *     )
+     * )
      */
     public function delete(int $id, DeleteRequestFilter $requestFilter)
     {
@@ -235,6 +288,7 @@ class RecordsController extends AbstractController
                 ];
             }
         } catch (\Exception $exception) {
+            $statusCode = 404;
             $response = [
                 'Record could not be deleted!'
             ];
@@ -243,6 +297,46 @@ class RecordsController extends AbstractController
         return new JsonResponse($response, $statusCode);
     }
 
+    /**
+     * @param int $id
+     * @param Request $request
+     * @param UpdateRequestFilter $requestFilter
+     *
+     * @return JsonResponse
+     *
+     * @OA\Put(
+     *     path="/records/{recordId}",
+     *     tags={"records"},
+     *     operationId="update",
+     *     summary="Update record",
+     *     description="Update the record with given ID and provided post data.",
+     *
+     *     @OA\Response(
+     *         response=200,
+     *         description="Returns Updated Record"
+     *     ),
+     *
+     *     @OA\RequestBody(
+     *         description="Input data format",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="name",
+     *                     description="Updated name of the record",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="artistId",
+     *                     description="ID of related artist",
+     *                     type="int",
+     *                 ),
+     *                 example={"name": "Down By The River", "artistId": 52}
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function update(int $id, Request $request, UpdateRequestFilter $requestFilter)
     {
         $statusCode = 400;

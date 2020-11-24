@@ -8,10 +8,6 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use OpenApi\Annotations as OA;
 
-/**
- * @OA\Info(title="OldiesButGoldies API", version="1.0.0")
- * @OA\PathItem(path="/")
- */
 class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
