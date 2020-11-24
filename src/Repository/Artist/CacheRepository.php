@@ -74,11 +74,13 @@ class CacheRepository implements ArtistRepositoryInterface
     /**
      * @param Artist $artist
      *
+     * @return Artist
+     *
      * @throws ORMException
      */
-    public function save(Artist $artist): void
+    public function save(Artist $artist): Artist
     {
-        $this->artistRepository->save($artist);
+        return $this->artistRepository->save($artist);
     }
 
     /**

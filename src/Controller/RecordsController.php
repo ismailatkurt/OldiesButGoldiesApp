@@ -68,6 +68,7 @@ class RecordsController extends AbstractController
      *       @OA\Schema(type="int")
      *     ),
      *     @OA\Parameter(name="searchTerm",
+     *       description="*Like* search within name, ",
      *       in="query",
      *       required=false,
      *       @OA\Schema(type="string")
@@ -273,9 +274,20 @@ class RecordsController extends AbstractController
      *     summary="Update record",
      *     description="Update the record with given ID and provided post data.",
      *
+     *     @OA\Parameter(
+     *         name="recordId",
+     *         in="path",
+     *         required=true,
+     *         description="The id of the record to retrieve",
+     *         @OA\Schema(
+     *           type="integer",
+     *           format="int64"
+     *         )
+     *     ),
+     *
      *     @OA\Response(
-     *         response=200,
-     *         description="Returns Updated Record"
+     *         response=204,
+     *         description="No content"
      *     ),
      *
      *     @OA\RequestBody(
@@ -332,12 +344,15 @@ class RecordsController extends AbstractController
 
             if ($requestFilter->isValid()) {
                 $requestData = $requestFilter->getValues();
+                $publishedAt = DateTime::createFromFormat('Y-m-d', $requestData['publishedAt']);
                 $record = $this->recordService->update(
                     $requestData['id'],
                     $requestData['name'],
-                    $requestData['artistId']
+                    $requestData['artistId'],
+                    $requestData['genre'],
+                    $requestData['description'],
+                    $publishedAt ? $publishedAt : null
                 );
-                $response = $record;
                 $statusCode = 204;
                 $this->eventDispatcher->dispatch(new Updated($record), Updated::NAME);
             } else {
@@ -354,6 +369,7 @@ class RecordsController extends AbstractController
                 'message' => 'Could not update record!'
             ];
         }
+
         return new JsonResponse($response, $statusCode);
     }
 
@@ -377,6 +393,10 @@ class RecordsController extends AbstractController
      *             type="integer",
      *             format="int64"
      *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=202,
+     *         description="Deleted successfully",
      *     ),
      *     @OA\Response(
      *         response=400,

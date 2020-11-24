@@ -120,6 +120,18 @@
                 "summary": "Update artist",
                 "description": "Update the artist with given ID and provided post data.",
                 "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "artistId",
+                        "in": "path",
+                        "description": "The id of the artist to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "description": "Input data format",
                     "content": {
@@ -140,8 +152,40 @@
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Returns Updated Artist"
+                    "204": {
+                        "description": "No content"
+                    }
+                }
+            }
+        },
+        "/artists/{recordId}": {
+            "delete": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Deletes a artist",
+                "operationId": "delete",
+                "parameters": [
+                    {
+                        "name": "artistId",
+                        "in": "path",
+                        "description": "Id of the artist to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Deleted successfully"
+                    },
+                    "400": {
+                        "description": "Validation error message"
+                    },
+                    "404": {
+                        "description": "Artist not found"
                     }
                 }
             }
@@ -174,6 +218,7 @@
                     {
                         "name": "searchTerm",
                         "in": "query",
+                        "description": "*Like* search within name, ",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -283,6 +328,18 @@
                 "summary": "Update record",
                 "description": "Update the record with given ID and provided post data.",
                 "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "recordId",
+                        "in": "path",
+                        "description": "The id of the record to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "description": "Input data format",
                     "content": {
@@ -331,8 +388,8 @@
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Returns Updated Record"
+                    "204": {
+                        "description": "No content"
                     }
                 }
             },
@@ -355,6 +412,9 @@
                     }
                 ],
                 "responses": {
+                    "202": {
+                        "description": "Deleted successfully"
+                    },
                     "400": {
                         "description": "Validation error message"
                     },

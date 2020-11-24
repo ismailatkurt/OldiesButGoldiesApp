@@ -157,9 +157,9 @@ class Artist implements JsonSerializable
             'id' => $this->getId(),
             'name' => $this->getName(),
             'photo' => $this->getPhoto(),
-            'created_at' => $this->getCreatedAt(),
-            'updated_at' => $this->getUpdatedAt(),
-            'records' => $this->getRecords()
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt(),
+            'records' => $this->getRecords()->toArray()
         ];
     }
 }

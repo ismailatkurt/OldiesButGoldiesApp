@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Events\Artist\Saved;
 use App\Events\Artist\Updated;
+use App\Events\Record\Deleted;
 use App\RequestFilters\Artist\AllRequestFilter;
 use App\RequestFilters\Artist\CreateRequestFilter;
 use App\RequestFilters\Artist\OneRequestFilter;
 use App\RequestFilters\Artist\UpdateRequestFilter;
+use App\RequestFilters\Record\DeleteRequestFilter;
 use App\Services\Artist\ArtistService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
@@ -231,9 +233,20 @@ class ArtistsController extends AbstractController
      *     summary="Update artist",
      *     description="Update the artist with given ID and provided post data.",
      *
+     *     @OA\Parameter(
+     *         name="artistId",
+     *         in="path",
+     *         required=true,
+     *         description="The id of the artist to retrieve",
+     *         @OA\Schema(
+     *           type="integer",
+     *           format="int64"
+     *         )
+     *     ),
+     *
      *     @OA\Response(
-     *         response=200,
-     *         description="Returns Updated Artist"
+     *         response=204,
+     *         description="No content"
      *     ),
      *
      *     @OA\RequestBody(
@@ -268,7 +281,6 @@ class ArtistsController extends AbstractController
                     $requestData['id'],
                     $requestData['name']
                 );
-                $response = $artist;
                 $statusCode = 204;
                 $this->eventDispatcher->dispatch(new Updated($artist), Updated::NAME);
             } else {
@@ -285,6 +297,79 @@ class ArtistsController extends AbstractController
                 'message' => 'Could not update artist!'
             ];
         }
+
+        return new JsonResponse($response, $statusCode);
+    }
+
+    /**
+     * @param int $id
+     * @param DeleteRequestFilter $requestFilter
+     *
+     * @return JsonResponse
+     *
+     * @OA\Delete(
+     *     path="/artists/{recordId}",
+     *     tags={"artists"},
+     *     summary="Deletes a artist",
+     *     operationId="delete",
+     *     @OA\Parameter(
+     *         name="artistId",
+     *         in="path",
+     *         description="Id of the artist to delete",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=202,
+     *         description="Deleted successfully",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error message",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Artist not found",
+     *     )
+     * )
+     */
+    public function delete(int $id, DeleteRequestFilter $requestFilter)
+    {
+        $statusCode = 400;
+
+        try {
+            $requestFilter->setData(['id' => $id]);
+            if ($requestFilter->isValid()) {
+                $requestData = $requestFilter->getValues();
+                $artist = $this->artistService->one($requestData['id']);
+                if ($artist) {
+                    $this->artistService->delete($artist);
+
+                    $response = [
+                        'Record deleted successfully!'
+                    ];
+                    $statusCode = 202;
+                    $this->eventDispatcher->dispatch(new Deleted($artist), Deleted::NAME);
+                } else {
+                    $response = [
+                        'Artist does not exist!'
+                    ];
+                }
+            } else {
+                $response = [
+                    'error' => $requestFilter->getMessages()
+                ];
+            }
+        } catch (\Exception $exception) {
+            $statusCode = 404;
+            $response = [
+                'Artist could not be deleted! An error occurred!'
+            ];
+        }
+
         return new JsonResponse($response, $statusCode);
     }
 }

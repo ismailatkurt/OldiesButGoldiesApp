@@ -102,15 +102,28 @@ class RecordService implements RecordServiceInterface
      * @param string $name
      * @param int $artistId
      *
+     * @param string|null $genre
+     * @param string|null $description
+     * @param DateTime|null $publishedAt
+     *
      * @return Record
      *
      * @throws ORMException
      */
-    public function update(int $id, string $name, int $artistId): Record
-    {
+    public function update(
+        int $id,
+        string $name,
+        int $artistId,
+        ?string $genre = '',
+        ?string $description = '',
+        ?DateTime $publishedAt = null
+    ): Record {
         $record = $this->one($id);
 
         $record->setName($name);
+        $record->setGenre($genre);
+        $record->setDescription($description);
+        $record->setPublishedAt($publishedAt);
 
         $artist = $this->artistRepository->one($artistId);
         $record->setArtist($artist);

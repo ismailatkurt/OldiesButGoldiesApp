@@ -224,6 +224,15 @@ class Record implements JsonSerializable
      */
     public function jsonSerialize()
     {
-        return get_object_vars($this);
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'genre' => $this->getGenre(),
+            'description' => $this->getDescription(),
+            'publishedAt' => $this->getPublishedAt(),
+            'coverPhoto' => $this->getCoverPhoto(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt()
+        ];
     }
 }

@@ -58,9 +58,25 @@ class ArtistService implements ArtistServiceInterface
     {
         $artist = new Artist();
         $artist->setName($name);
-        $this->artistCacheRepository->save($artist);
 
-        return $artist;
+        return $this->artistCacheRepository->save($artist);
+    }
+
+    /**
+     * @param int $id
+     * @param string $name
+     *
+     * @return Artist
+     *
+     * @throws ORMException
+     */
+    public function update(int $id, string $name): Artist
+    {
+        $artist = $this->one($id);
+
+        $artist->setName($name);
+
+        return $this->artistCacheRepository->save($artist);
     }
 
     /**
@@ -71,5 +87,15 @@ class ArtistService implements ArtistServiceInterface
     public function one(int $id): ?Artist
     {
         return $this->artistCacheRepository->one($id);
+    }
+
+    /**
+     * @param Artist $artist
+     *
+     * @return mixed|void
+     */
+    public function delete(Artist $artist)
+    {
+        $this->artistCacheRepository->delete($artist);
     }
 }

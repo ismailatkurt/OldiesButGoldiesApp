@@ -56,7 +56,18 @@ interface RecordServiceInterface
      * @param string $name
      * @param int $artistId
      *
+     * @param string|null $genre
+     * @param string|null $description
+     * @param DateTime|null $publishedAt
+     *
      * @return Record
      */
-    public function update(int $id, string $name, int $artistId): Record;
+    public function update(
+        int $id,
+        string $name,
+        int $artistId,
+        ?string $genre = '',
+        ?string $description = '',
+        ?DateTime $publishedAt = null
+    ): Record;
 }

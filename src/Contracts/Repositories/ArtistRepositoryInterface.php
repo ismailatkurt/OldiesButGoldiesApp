@@ -20,9 +20,11 @@ interface ArtistRepositoryInterface
     /**
      * @param Artist $artist
      *
+     * @return Artist
+     *
      * @throws ORMException
      */
-    public function save(Artist $artist): void;
+    public function save(Artist $artist): Artist;
 
     /**
      * @param int $id
