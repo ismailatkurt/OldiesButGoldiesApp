@@ -2,7 +2,7 @@
 
 namespace App\Subscribers;
 
-use App\Adapters\RedisAdapter;
+use App\Adapters\Cache\RedisAdapter;
 use App\Entity\Record;
 use App\Events\Record\Deleted;
 use App\Events\Record\Saved;
@@ -46,7 +46,7 @@ class RecordSubscriber extends AbstractSubscriber implements EventSubscriberInte
     public function onUpdatedAction(Updated $event)
     {
         $this->deleteWithPattern(CacheRepository::RECORD_ALL_CACHE_KEY . '*');
-        $this->cacheAdapter->del(Record::class . '_one_' . $event->getRecord()->getId());
+        $this->cacheAdapter->del(CacheRepository::RECORD_SINGLE_CACHE_KEY . '_' . $event->getRecord()->getId());
     }
 
     /**
@@ -55,6 +55,6 @@ class RecordSubscriber extends AbstractSubscriber implements EventSubscriberInte
     public function onDeletedAction(Deleted $event)
     {
         $this->deleteWithPattern(CacheRepository::RECORD_ALL_CACHE_KEY . '*');
-        $this->cacheAdapter->del(Record::class . '_one_' . $event->getRecord()->getId());
+        $this->cacheAdapter->del(CacheRepository::RECORD_SINGLE_CACHE_KEY . '_' . $event->getRecord()->getId());
     }
 }

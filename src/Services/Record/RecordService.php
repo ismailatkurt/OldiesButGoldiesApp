@@ -38,12 +38,31 @@ class RecordService implements RecordServiceInterface
      * @param int $page
      * @param int $limit
      * @param string|null $searchTerm
+     * @param string|null $genre
+     * @param string|null $description
+     * @param string|null $publishedAt
      *
      * @return RecordsResult
      */
-    public function all(int $page, int $limit, ?string $searchTerm = ''): RecordsResult
+    public function all(
+        int $page,
+        int $limit,
+        ?string $searchTerm = '',
+        ?string $genre = '',
+        ?string $description = '',
+        ?string $publishedAt = '',
+        ?string $artistName = ''
+    ): RecordsResult
     {
-        return $this->recordCacheRepository->all($page, $limit, $searchTerm);
+        return $this->recordCacheRepository->all(
+            $page,
+            $limit,
+            $searchTerm,
+            $genre,
+            $description,
+            $publishedAt,
+            $artistName
+        );
     }
 
     /**

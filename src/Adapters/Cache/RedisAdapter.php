@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Adapters;
+namespace App\Adapters\Cache;
 
 use App\Contracts\Adapters\CacheAdapterInterface;
 use Exception;
@@ -76,7 +76,7 @@ class RedisAdapter implements CacheAdapterInterface
                 $this->redis->select($this->databaseId);
                 $this->redis->setOption(Redis::OPT_PREFIX, $this->prefix);
             } catch (Exception $exception) {
-                $this->redis = new DummyCacheAdapter();
+                $this->redis = new DummyAdapter();
             }
         }
 

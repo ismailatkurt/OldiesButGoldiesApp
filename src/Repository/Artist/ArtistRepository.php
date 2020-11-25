@@ -8,6 +8,7 @@ use App\Presenters\ArtistsResult;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -63,7 +64,7 @@ class ArtistRepository extends ServiceEntityRepository implements ArtistReposito
      */
     public function save(Artist $artist): Artist
     {
-        $this->getEntityManager()->persist($artist);
+        $artist = $this->getEntityManager()->merge($artist);
         $this->getEntityManager()->flush();
 
         return $artist;
@@ -85,5 +86,18 @@ class ArtistRepository extends ServiceEntityRepository implements ArtistReposito
     public function one(int $id): ?Artist
     {
         return $this->find($id);
+    }
+
+    /**
+     * @param Artist $artist
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function delete(Artist $artist)
+    {
+        $artist = $this->getEntityManager()->merge($artist);
+        $this->getEntityManager()->remove($artist);
+        $this->getEntityManager()->flush();
     }
 }

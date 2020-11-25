@@ -14,182 +14,6 @@
     },
     "paths": {
         "/": {},
-        "/artists": {
-            "get": {
-                "tags": [
-                    "artists"
-                ],
-                "summary": "Get all artists",
-                "description": "Returns all artists available",
-                "operationId": "index",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "int"
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "int"
-                        }
-                    },
-                    {
-                        "name": "searchTerm",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "List of artists"
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "artists"
-                ],
-                "summary": "Create new artist",
-                "description": "Create new artist with given data",
-                "operationId": "create",
-                "requestBody": {
-                    "description": "Input data format",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "description": "Name of the artist",
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "name": "Edith Piaf"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Returns Created Artist"
-                    }
-                }
-            }
-        },
-        "/artists/{artistId}": {
-            "get": {
-                "tags": [
-                    "artists"
-                ],
-                "summary": "Get single artist",
-                "description": "Returns the artist with given ID.",
-                "operationId": "one",
-                "parameters": [
-                    {
-                        "name": "artistId",
-                        "in": "path",
-                        "description": "The id of the artist to retrieve",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Returns Single artist"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "artists"
-                ],
-                "summary": "Update artist",
-                "description": "Update the artist with given ID and provided post data.",
-                "operationId": "update",
-                "parameters": [
-                    {
-                        "name": "artistId",
-                        "in": "path",
-                        "description": "The id of the artist to retrieve",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Input data format",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "description": "Updated name of the artist",
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "name": "Daft Punk"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "204": {
-                        "description": "No content"
-                    }
-                }
-            }
-        },
-        "/artists/{recordId}": {
-            "delete": {
-                "tags": [
-                    "artists"
-                ],
-                "summary": "Deletes a artist",
-                "operationId": "delete",
-                "parameters": [
-                    {
-                        "name": "artistId",
-                        "in": "path",
-                        "description": "Id of the artist to delete",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        }
-                    }
-                ],
-                "responses": {
-                    "202": {
-                        "description": "Deleted successfully"
-                    },
-                    "400": {
-                        "description": "Validation error message"
-                    },
-                    "404": {
-                        "description": "Artist not found"
-                    }
-                }
-            }
-        },
         "/records": {
             "get": {
                 "tags": [
@@ -218,7 +42,39 @@
                     {
                         "name": "searchTerm",
                         "in": "query",
-                        "description": "*Like* search within name, ",
+                        "description": "*Like* search within name, genre, description",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "genre",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "publishedAt",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "artistName",
+                        "in": "query",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -420,6 +276,182 @@
                     },
                     "404": {
                         "description": "Record not found"
+                    }
+                }
+            }
+        },
+        "/artists": {
+            "get": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Get all artists",
+                "description": "Returns all artists available",
+                "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "searchTerm",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of artists"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Create new artist",
+                "description": "Create new artist with given data",
+                "operationId": "create",
+                "requestBody": {
+                    "description": "Input data format",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Name of the artist",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "Edith Piaf"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns Created Artist"
+                    }
+                }
+            }
+        },
+        "/artists/{artistId}": {
+            "get": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Get single artist",
+                "description": "Returns the artist with given ID.",
+                "operationId": "one",
+                "parameters": [
+                    {
+                        "name": "artistId",
+                        "in": "path",
+                        "description": "The id of the artist to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns Single artist"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Update artist",
+                "description": "Update the artist with given ID and provided post data.",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "artistId",
+                        "in": "path",
+                        "description": "The id of the artist to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Input data format",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Updated name of the artist",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "Daft Punk"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    }
+                }
+            }
+        },
+        "/artists/{recordId}": {
+            "delete": {
+                "tags": [
+                    "artists"
+                ],
+                "summary": "Deletes a artist",
+                "operationId": "delete",
+                "parameters": [
+                    {
+                        "name": "artistId",
+                        "in": "path",
+                        "description": "Id of the artist to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Deleted successfully"
+                    },
+                    "400": {
+                        "description": "Validation error message"
+                    },
+                    "404": {
+                        "description": "Artist not found"
                     }
                 }
             }

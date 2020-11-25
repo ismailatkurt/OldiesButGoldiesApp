@@ -68,7 +68,27 @@ class RecordsController extends AbstractController
      *       @OA\Schema(type="int")
      *     ),
      *     @OA\Parameter(name="searchTerm",
-     *       description="*Like* search within name, ",
+     *       description="*Like* search within name, genre, description",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(name="genre",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(name="description",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(name="publishedAt",
+     *       in="query",
+     *       required=false,
+     *       @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(name="artistName",
      *       in="query",
      *       required=false,
      *       @OA\Schema(type="string")
@@ -82,7 +102,7 @@ class RecordsController extends AbstractController
     public function all(Request $request, AllRequestFilter $allRequestFilter)
     {
         try {
-            $queryParameters = $this->getQueryParameters($request->getQueryString());
+            $queryParameters = $this->getQueryParameters(urldecode($request->getQueryString()));
 
             $allRequestFilter->setData($queryParameters);
             if ($allRequestFilter->isValid()) {
@@ -91,7 +111,11 @@ class RecordsController extends AbstractController
                 $response = $this->recordService->all(
                     $requestData['page'],
                     $requestData['limit'],
-                    $requestData['searchTerm']
+                    $requestData['searchTerm'],
+                    $requestData['genre'],
+                    $requestData['description'],
+                    $requestData['publishedAt'],
+                    $requestData['artistName']
                 );
             } else {
                 $response = [
@@ -335,6 +359,7 @@ class RecordsController extends AbstractController
     public function update(int $id, Request $request, UpdateRequestFilter $requestFilter)
     {
         $statusCode = 400;
+        $response = [];
 
         try {
             $postData = json_decode($request->getContent(), true);

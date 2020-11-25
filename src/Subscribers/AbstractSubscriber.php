@@ -2,7 +2,7 @@
 
 namespace App\Subscribers;
 
-use App\Adapters\RedisAdapter;
+use App\Adapters\Cache\RedisAdapter;
 
 abstract class AbstractSubscriber
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Adapters;
+namespace App\Adapters\Cache;
 
 use App\Contracts\Adapters\CacheAdapterInterface;
 
-class DummyCacheAdapter implements CacheAdapterInterface
+class DummyAdapter implements CacheAdapterInterface
 {
     /**
      * @param string $key

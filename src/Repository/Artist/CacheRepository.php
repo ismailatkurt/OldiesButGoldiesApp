@@ -2,7 +2,7 @@
 
 namespace App\Repository\Artist;
 
-use App\Adapters\RedisAdapter;
+use App\Adapters\Cache\RedisAdapter;
 use App\Contracts\Repositories\ArtistRepositoryInterface;
 use App\Entity\Artist;
 use App\Presenters\ArtistsResult;
@@ -15,11 +15,6 @@ class CacheRepository implements ArtistRepositoryInterface
     const ARTIST_SINGLE_CACHE_KEY = 'artists_one';
 
     /**
-     * @var RedisAdapter
-     */
-    private RedisAdapter $cacheAdapter;
-
-    /**
      * @var ArtistRepository
      */
     private ArtistRepository $artistRepository;
@@ -27,21 +22,18 @@ class CacheRepository implements ArtistRepositoryInterface
     /**
      * @var RedisAdapter
      */
-    private RedisAdapter $redisAdapter;
+    private RedisAdapter $cacheAdapter;
 
     /**
      * @param RedisAdapter $cacheAdapter
      * @param ArtistRepository $artistRepository
-     * @param RedisAdapter $redisAdapter
      */
     public function __construct(
         RedisAdapter $cacheAdapter,
-        ArtistRepository $artistRepository,
-        RedisAdapter $redisAdapter
+        ArtistRepository $artistRepository
     ) {
         $this->cacheAdapter = $cacheAdapter;
         $this->artistRepository = $artistRepository;
-        $this->redisAdapter = $redisAdapter;
     }
 
     /**
@@ -50,7 +42,6 @@ class CacheRepository implements ArtistRepositoryInterface
      * @param string|null $searchTerm
      *
      * @return ArtistsResult
-     * @throws InvalidArgumentException
      */
     public function all(int $page, int $limit, ?string $searchTerm = ''): ArtistsResult
     {

@@ -28,7 +28,7 @@ class CreateInitialRecordsSeeder extends AbstractSeed
             $randomTimeStamp= rand(-602821612,659482388);
             $recordsSeedData[] = [
                 'name' => $record['name'],
-                'genre' => array_rand($genres),
+                'genre' => $genres[array_rand($genres)],
                 'description' => $faker->realText(200),
                 'published_at' => date("Y-m-d H:i:s", $randomTimeStamp),
                 'cover_photo' => $this->createPhotoString($record['name']),

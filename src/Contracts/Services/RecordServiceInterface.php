@@ -13,10 +13,22 @@ interface RecordServiceInterface
      * @param int $page
      * @param int $limit
      * @param string|null $searchTerm
+     * @param string|null $genre
+     * @param string|null $description
+     * @param string|null $publishedAt
+     * @param string|null $artistName
      *
      * @return RecordsResult
      */
-    public function all(int $page, int $limit, ?string $searchTerm): RecordsResult;
+    public function all(
+        int $page,
+        int $limit,
+        ?string $searchTerm,
+        ?string $genre = '',
+        ?string $description = '',
+        ?string $publishedAt = '',
+        ?string $artistName = ''
+    ): RecordsResult;
 
     /**
      * @param string $name

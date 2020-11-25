@@ -30,18 +30,65 @@ class RecordRepository extends ServiceEntityRepository implements RecordReposito
      * @param int $page
      * @param int $limit
      * @param string|null $searchTerm
+     * @param string|null $genre
+     * @param string|null $description
+     * @param string|null $publishedAt
+     * @param string|null $artistName
      *
      * @return RecordsResult
      */
-    public function all(int $page, int $limit, ?string $searchTerm = ''): RecordsResult
-    {
-        $queryBuilder = $this->createQueryBuilder('a')
-        ->innerJoin('a.artist', 'art')
+    public function all(
+        int $page,
+        int $limit,
+        ?string $searchTerm = '',
+        ?string $genre = '',
+        ?string $description = '',
+        ?string $publishedAt = '',
+        ?string $artistName = ''
+    ): RecordsResult {
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->innerJoin('r.artist', 'art')
             ->addSelect('art');
 
         if (!empty($searchTerm)) {
-            $queryBuilder->where('LOWER(a.name) like :searchTerm')
-                ->setParameter('searchTerm', '%' . strtolower($searchTerm) . '%');
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->like(
+                        'LOWER(r.name)',
+                        $queryBuilder->expr()->literal('%' . strtolower($searchTerm) . '%')
+                    ),
+                    $queryBuilder->expr()->like(
+                        'LOWER(r.genre)',
+                        $queryBuilder->expr()->literal('%' . strtolower($searchTerm) . '%')
+                    ),
+                    $queryBuilder->expr()->like(
+                        'LOWER(r.description)',
+                        $queryBuilder->expr()->literal('%' . strtolower($searchTerm) . '%')
+                    )
+                )
+            );
+//            $queryBuilder->andWhere('(LOWER(r.name)||LOWER(r.genre)||LOWER(r.description)) like :searchTerm')
+//                ->setParameter('searchTerm', '%' . strtolower($searchTerm) . '%');
+        }
+
+        if (!empty($genre)) {
+            $queryBuilder->andWhere('LOWER(r.genre) like :genre')
+                ->setParameter('genre', '%' . strtolower($genre) . '%');
+        }
+
+        if (!empty($description)) {
+            $queryBuilder->andWhere('LOWER(r.description) like :description')
+                ->setParameter('description', '%' . strtolower($description) . '%');
+        }
+
+        if (!empty($publishedAt)) {
+            $queryBuilder->andWhere('r.published_at = :publishedAt')
+                ->setParameter('publishedAt', strtolower($publishedAt));
+        }
+
+        if (!empty($artistName)) {
+            $queryBuilder->andWhere('LOWER(art.name) like :artistName')
+                ->setParameter('artistName', '%' . strtolower($artistName) . '%');
         }
 
         $query = $queryBuilder->getQuery();
@@ -66,7 +113,7 @@ class RecordRepository extends ServiceEntityRepository implements RecordReposito
      */
     public function save(Record $record): ?Record
     {
-        $this->getEntityManager()->persist($record);
+        $record = $this->getEntityManager()->merge($record);
         $this->getEntityManager()->flush();
 
         return $record;
@@ -90,6 +137,7 @@ class RecordRepository extends ServiceEntityRepository implements RecordReposito
      */
     public function delete(Record $record)
     {
+        $record = $this->getEntityManager()->merge($record);
         $this->getEntityManager()->remove($record);
         $this->getEntityManager()->flush();
     }

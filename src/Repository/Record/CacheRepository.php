@@ -2,7 +2,7 @@
 
 namespace App\Repository\Record;
 
-use App\Adapters\RedisAdapter;
+use App\Adapters\Cache\RedisAdapter;
 use App\Contracts\Repositories\RecordRepositoryInterface;
 use App\Entity\Record;
 use App\Presenters\RecordsResult;
@@ -12,6 +12,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 class CacheRepository implements RecordRepositoryInterface
 {
     const RECORD_ALL_CACHE_KEY = 'records_all';
+    const RECORD_SINGLE_CACHE_KEY = 'records_one';
 
     /**
      * @var RecordRepository
@@ -47,19 +48,42 @@ class CacheRepository implements RecordRepositoryInterface
      * @param int $page
      * @param int $limit
      * @param string|null $searchTerm
+     * @param string|null $genre
+     * @param string|null $description
+     * @param string|null $publishedAt
+     * @param string|null $artistName
      *
      * @return RecordsResult
      */
-    public function all(int $page, int $limit, ?string $searchTerm = ''): RecordsResult
-    {
+    public function all(
+        int $page,
+        int $limit,
+        ?string $searchTerm = '',
+        ?string $genre = '',
+        ?string $description = '',
+        ?string $publishedAt = '',
+        ?string $artistName = ''
+    ): RecordsResult {
+        $cacheKeyPostfix = implode(
+            '_',
+            [$page, $limit, $searchTerm, $genre, $description, $publishedAt, $artistName]
+        );
         $records = $this->cacheAdapter->get(
-            self::RECORD_ALL_CACHE_KEY . '_' . $page . '_' . $limit . '_' . $searchTerm
+            self::RECORD_ALL_CACHE_KEY . '_' . $cacheKeyPostfix
         );
 
         if (empty($records)) {
-            $records = $this->recordRepository->all($page, $limit, $searchTerm);
+            $records = $this->recordRepository->all(
+                $page,
+                $limit,
+                $searchTerm,
+                $genre,
+                $description,
+                $publishedAt,
+                $artistName
+            );
             $this->cacheAdapter->set(
-                self::RECORD_ALL_CACHE_KEY . '_' . $page . '_' . $limit . '_' . $searchTerm,
+                self::RECORD_ALL_CACHE_KEY . '_' . $cacheKeyPostfix,
                 serialize($records)
             );
         } else {
@@ -88,7 +112,21 @@ class CacheRepository implements RecordRepositoryInterface
      */
     public function one(int $id): ?Record
     {
-        return $this->recordRepository->one($id);
+        $record = $this->cacheAdapter->get(
+            self::RECORD_SINGLE_CACHE_KEY . '_' . $id
+        );
+
+        if (empty($record)) {
+            $record = $this->recordRepository->one($id);
+            $this->cacheAdapter->set(
+                self::RECORD_SINGLE_CACHE_KEY . '_' . $id,
+                serialize($record)
+            );
+        } else {
+            $record = unserialize($record);
+        }
+
+        return $record;
     }
 
     /**

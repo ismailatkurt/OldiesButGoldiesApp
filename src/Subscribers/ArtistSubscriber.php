@@ -2,7 +2,7 @@
 
 namespace App\Subscribers;
 
-use App\Adapters\RedisAdapter;
+use App\Adapters\Cache\RedisAdapter;
 use App\Entity\Artist;
 use App\Entity\Record;
 use App\Events\Artist\Saved;

@@ -272,6 +272,7 @@ class ArtistsController extends AbstractController
     public function update(int $id, Request $request, UpdateRequestFilter $requestFilter)
     {
         $statusCode = 400;
+        $response = [];
 
         try {
             $postData = json_decode($request->getContent(), true);
