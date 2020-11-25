@@ -38,6 +38,7 @@ class CreateInitialRecordsSeeder extends AbstractSeed
             ];
         }
 
+        $this->query('TRUNCATE records RESTART IDENTITY CASCADE;');
         $records = $this->table('records');
         $records->insert($recordsSeedData)
             ->saveData();

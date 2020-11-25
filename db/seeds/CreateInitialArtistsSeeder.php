@@ -17,6 +17,8 @@ class CreateInitialArtistsSeeder extends AbstractSeed
             ];
         }
 
+        $this->query('TRUNCATE artists RESTART IDENTITY CASCADE;');
+
         $artists = $this->table('artists');
         $artists->insert($artistsSeedData)
             ->saveData();

@@ -19,3 +19,12 @@ That is supposed to take a couple of minutes. Once it is finalized, open your br
 
 ### Documentation
 Swagger UI can be found under http://localhost/documentation
+
+Unit Tests are executed on docker startup
+
+Acceptance Tests can be executed by running following command on your local terminal
+- locate to project directory
+- execute command below
+```
+sh run-acceptance-test.sh
+```

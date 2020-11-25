@@ -191,6 +191,8 @@ class ArtistsController extends AbstractController
      */
     public function create(Request $request, CreateRequestFilter $createRequestFilter)
     {
+        $statusCode = 400;
+
         try {
             $postData = json_decode($request->getContent(), true);
             $createRequestFilter->setData($postData);
@@ -201,12 +203,14 @@ class ArtistsController extends AbstractController
                 $this->eventDispatcher->dispatch(new Saved($artist), Saved::NAME);
 
                 $response = $artist;
+                $statusCode = 201;
             } else {
                 $response = [
                     'error' => $createRequestFilter->getMessages()
                 ];
             }
         } catch (UniqueConstraintViolationException $exception) {
+            $statusCode = 409;
             $response = [
                 'message' => 'Artist already exists.'
             ];
@@ -216,7 +220,7 @@ class ArtistsController extends AbstractController
             ];
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($response, $statusCode);
     }
 
     /**

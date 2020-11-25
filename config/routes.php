@@ -14,6 +14,12 @@ return function (RoutingConfigurator $routes) {
     $routes->add('artists_create', '/artists')
         ->controller([ArtistsController::class, 'create'])
         ->methods(['POST']);
+    $routes->add('artists_update', '/artists/{id}')
+        ->controller([ArtistsController::class, 'update'])
+        ->methods(['PUT']);
+    $routes->add('artists_delete', '/artists/{id}')
+        ->controller([ArtistsController::class, 'delete'])
+        ->methods(['DELETE']);
 
     $routes->add('records_all', '/records')
         ->controller([RecordsController::class, 'all'])
